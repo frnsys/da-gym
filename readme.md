@@ -17,3 +17,20 @@ Possible improvements:
 
 - the sample generated from the population assume a perfectly random sampling procedure. Could introduce biases into that so that e.g. sub-populations are over/underrepresented in the sample.
 - open to other ideas as well!
+
+## Usage
+
+```python
+from da_gym import generate_exercise
+
+sample_df, world = generate_exercise()
+
+# `sample_df` is the dataframe you analyze
+# `world` contains info to check against.
+# for example, to view the DAG:
+
+import matplotlib.pyplot as plt
+nx.draw_networkx(world['dag'])
+plt.axis('off')
+plt.show()
+```

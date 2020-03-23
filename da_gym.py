@@ -2,12 +2,10 @@ import random
 import numpy as np
 import pandas as pd
 import networkx as nx
-from enum import Enum
 from scipy import stats
 
-class Type(Enum):
-    DISCRETE = 0
-    CONTINUOUS = 1
+DISCRETE = 'discrete'
+CONTINUOUS = 'continuous'
 
 def random_polynomial(n_args, noise_scale=0.01):
     intercept = random.random()
@@ -30,7 +28,7 @@ def random_dag(n, p):
     return nx.DiGraph([(u, v) for (u, v) in graph.edges() if u < v])
 
 def random_dist(typ, discrete_range=(2, 5)):
-    if typ is Type.DISCRETE:
+    if typ is DISCRETE:
         # For now, beta-binomial
         alpha = stats.halfnorm.rvs(loc=0, scale=1)
         beta = stats.halfnorm.rvs(loc=0, scale=1)
@@ -43,7 +41,7 @@ def random_dist(typ, discrete_range=(2, 5)):
             }
         }
 
-    elif typ is Type.CONTINUOUS:
+    elif typ is CONTINUOUS:
         # For now, normal
         mean = stats.norm.rvs(loc=0, scale=1)
         std = stats.halfnorm.rvs(loc=0, scale=1)
@@ -75,14 +73,14 @@ def generate_exercise(n_features=5, discrete_range=(2,5), scale_range=(1, 100), 
     # Features
     feats = [{
         'observed': True,
-        'type': Type.DISCRETE
+        'type': DISCRETE
             if random.random() < p_discrete
-            else Type.CONTINUOUS
+            else CONTINUOUS
     } for _ in range(n_features)]
 
     # Random scaling for continuous variables
     for f in feats:
-        if f['type'] is Type.CONTINUOUS:
+        if f['type'] is CONTINUOUS:
             f['scale'] = np.random.randint(*scale_range)
         else:
             f['scale'] = 1.
@@ -154,7 +152,7 @@ def generate_exercise(n_features=5, discrete_range=(2,5), scale_range=(1, 100), 
 
         # If this is a discrete variable, discretize
         # There is probably a better way to do this
-        if feats[n]['type'] is Type.DISCRETE:
+        if feats[n]['type'] is DISCRETE:
             n_bins = np.random.randint(*discrete_range)
             _, bins = np.histogram(samples[n], bins=n_bins)
             samples[n] = np.digitize(samples[n], bins=bins)
@@ -163,7 +161,7 @@ def generate_exercise(n_features=5, discrete_range=(2,5), scale_range=(1, 100), 
 
     # Apply scaling
     for f in samples.keys():
-        if feats[f]['type'] is Type.CONTINUOUS:
+        if feats[f]['type'] is CONTINUOUS:
             samples[f] *= feats[f]['scale']
 
     # Generate complete population dataframe
@@ -196,5 +194,6 @@ if __name__ == '__main__':
     df, world = generate_exercise()
     print(df)
     print(world['features'])
-    nx.draw(world['dag'])
+    nx.draw_networkx(world['dag'])
+    plt.axis('off')
     plt.show()
