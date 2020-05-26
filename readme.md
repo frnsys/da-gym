@@ -17,6 +17,7 @@ Randomly generates data for data analysis exercises. You have access to all the 
 
 - the sample generated from the population assume a perfectly random sampling procedure. Could introduce biases into that so that e.g. sub-populations are over/underrepresented in the sample.
 - generate specific questions to answer
+- time series support
 - open to other ideas as well!
 
 ## Usage
